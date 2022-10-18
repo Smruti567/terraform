@@ -1,49 +1,69 @@
 terraform {
   required_providers {
     aws = {
-        source = "hashicorp/aws"
-        version = "4.34.0"
+      source = "hashicorp/aws"
+      version = "4.35.0"
     }
   }
 }
 
 provider "aws" {
-   
+  # Configuration options
 }
 
-variable "cidr_blocks" {
-  description = "cidr for vpc and subnet"
-  type = list(string)
-}
+variable vpc_cidr_block {}
+variable subnet_cidr_block {}
+variable avail_zone {}
+variable env {}
 
-variable avail_zone{
 
-}
-
-#variable "subnetcidr" {
-#  description = "cidr for subnet"
-#  type = string
-#}
-
-#variable "availzone" {
-#  description = "variable for avalabilty zone"
-#  default = "ap-south-1a"
-#  type = string
-#}
-
-resource "aws_vpc" "octvpc" {
-  cidr_block = var.cidr_blocks[0]
+#Create a VPC
+resource "aws_vpc" "myapp_vpc" {
+  cidr_block = var.vpc_cidr_block
   tags = {
-    "Name" = "vpc10"
+    Name = "${var.env}-vpc"
   }
 }
 
-resource "aws_subnet" "octsub" {
-  vpc_id = aws_vpc.octvpc.id
-  cidr_block = var.cidr_blocks[1]
+#Create a subnet
+resource "aws_subnet" "myapp_subnet1" {
+  vpc_id = aws_vpc.myapp_vpc.id
+  cidr_block = var.subnet_cidr_block
   availability_zone = var.avail_zone
   tags = {
-    "Name" = "sub10"
+    "Name" = "${var.env}-subnet1"
   }
 }
+
+
+#Create a routetable
+
+resource "aws_route_table" "myapprtb" {
+  vpc_id = aws_vpc.myapp_vpc.id
+  route  {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.myapp_itg.id
+  }
+  tags = {
+    "Name" = "${var.env}-rtb"
+  }
+}
+
+#Create InternetGateway
+
+resource "aws_internet_gateway" "myapp_itg" {
+  vpc_id = aws_vpc.myapp_vpc.id
+  tags = {
+    "Name" = "${var.env}-itg"
+  }
+}
+
+#Create routetable association
+
+resource "aws_route_table_association" "rtb_subnet1" {
+  subnet_id = aws_subnet.myapp_subnet1.id
+  route_table_id = aws_route_table.myapprtb.id
+}
+
+#Create EC2 instance
 
