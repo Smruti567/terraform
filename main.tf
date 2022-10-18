@@ -64,6 +64,3 @@ resource "aws_route_table_association" "rtb_subnet1" {
   subnet_id = aws_subnet.myapp_subnet1.id
   route_table_id = aws_route_table.myapprtb.id
 }
-
-#Create EC2 instance
-
