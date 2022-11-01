@@ -13,7 +13,7 @@ provider "aws" {
 
 variable vpc_cidr_block {}
 variable subnet_cidr_block {}
-variable avail_zone {}
+#variable avail_zone {}
 variable env {}
 variable myip {}
 variable instance_type {}
@@ -31,7 +31,7 @@ resource "aws_vpc" "myapp_vpc" {
 resource "aws_subnet" "myapp_subnet1" {
   vpc_id = aws_vpc.myapp_vpc.id
   cidr_block = var.subnet_cidr_block
-  availability_zone = var.avail_zone
+  #availability_zone = var.avail_zone
   tags = {
     "Name" = "${var.env}-subnet1"
   }
@@ -111,7 +111,7 @@ resource "aws_security_group" "myapp_sg" {
 /*resource "aws_instance" "myapp-EC2" {
   ami = "ami-0e6329e222e662a52"
 }*/
-resource "aws_instance" "myapp-EC2" {
+resource "aws_instance" "myappserver" {
   ami = data.aws_ami.latest-amazon-linux-image.id
   instance_type = var.instance_type
 
