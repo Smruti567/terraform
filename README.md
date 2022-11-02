@@ -8,6 +8,8 @@ For creating a VPC which has internet connectivity, route table has to be config
 3. Create InternetGateway
 4. Create Subnet
 5. Create RouteTableAssosciation
+6. Create SecurityGroup
+7. Create EC2 Instance
 
 
 #Command to use:
